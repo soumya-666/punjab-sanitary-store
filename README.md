@@ -157,9 +157,8 @@ The logo on the brand page is the supplied file (`assets/brand/brand-logo.png`) 
   compositor with no scroll listeners; browsers without support simply show everything at rest.
   A frame that holds a scroll-driven child must use `overflow-clip`, never `overflow-hidden`.
 - **Buttons**: the fill rises from the bottom edge and the arrow is replaced by its twin.
-- **Header**: on desktop it steps out of the way while reading down the page and returns on
-  scrolling up. On phones and tablets the wordmark and menu gather into a floating capsule that
-  stays in view.
+- **Header**: a full-width bar on every screen size; it steps out of the way while reading down
+  the page and returns on scrolling up.
 - **WhatsApp button**: never sits over a hero photograph (sections marked `data-hero`) — it waits
   until the hero has scrolled out of its corner, and for five seconds after the page loads — and
   moves up at the foot of the page so the copyright and credit line are never covered.

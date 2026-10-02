@@ -90,7 +90,7 @@ export function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            className="on-dark relative max-h-svh overflow-y-auto overscroll-contain rounded-b-[1.75rem] border-b border-amber/25 bg-espresso text-ivory shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)]"
+            className="on-dark relative max-h-svh overflow-y-auto overscroll-contain border-b border-amber/25 bg-espresso text-ivory shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)]"
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
