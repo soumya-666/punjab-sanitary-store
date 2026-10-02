@@ -1,0 +1,1570 @@
+@import "tailwindcss";
+
+@source "../app";
+@source "../components";
+@source "../lib";
+
+/* ------------------------------------------------------------------
+   Design tokens — "Golden Hour"
+
+   Every colour is sampled from the hero photograph, so the whole site
+   sits in the light of that picture: dark timber for depth, lamplight
+   for accent, sunlit stone for the page.
+
+   Dark    espresso  the deepest shadow in the timber   (page darks)
+           walnut    the slatted wall                   (buttons, dark bands)
+           timber    the vanity drawer fronts           (hover, pressed)
+   Accent  bronze    the stone wall in shade            (links, labels on light)
+           copper    brass in warm light                (hairline rules)
+           amber     the LED cove lighting              (accent on dark)
+           sand      the sunlit floor                   (labels on dark)
+   Light   stone     travertine                         (image placeholders, rules)
+           linen     the counter top                    (alternate sections)
+           ivory     ceramic in warm light              (the page)
+   Text    ink       warm near-black
+------------------------------------------------------------------- */
+@theme {
+  --color-espresso: #1b120c;
+  --color-walnut: #3a2010;
+  --color-timber: #6c3f1d;
+  --color-bronze: #84532a;
+  --color-copper: #b5814f;
+  --color-amber: #e7b16d;
+  --color-sand: #e1b897;
+  --color-stone: #dfd0bc;
+  --color-linen: #f0e6d8;
+  --color-ivory: #f8f2e8;
+  --color-ink: #2b1e15;
+
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-luxe: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --breakpoint-3xl: 120rem;
+}
+
+@theme inline {
+  --font-display: var(--font-cormorant), "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    background-color: var(--color-espresso);
+  }
+
+  body {
+    min-height: 100svh;
+    background-color: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: var(--color-timber);
+    color: var(--color-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-bronze);
+    outline-offset: 3px;
+  }
+
+  .on-dark :focus-visible,
+  .on-dark:focus-visible {
+    outline-color: var(--color-amber);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Layout
+------------------------------------------------------------------- */
+@utility container-site {
+  width: 100%;
+  max-width: 100rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 5rem);
+}
+
+@utility section-y {
+  padding-block: clamp(4.5rem, 10vw, 10.5rem);
+}
+
+@utility section-y-tight {
+  padding-block: clamp(3.5rem, 7vw, 7rem);
+}
+
+/* ------------------------------------------------------------------
+   Editorial type scale — fluid from 320px to 1920px
+------------------------------------------------------------------- */
+@utility text-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, min(0.9rem + 10.5vw, 19vh), 9.75rem);
+  line-height: 0.92;
+  letter-spacing: -0.022em;
+}
+
+@utility text-h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 1.25rem + 5.6vw, 6.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.018em;
+}
+
+@utility text-h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.125rem, 0.9rem + 3.6vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+}
+
+@utility text-h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.625rem, 1.2rem + 1.7vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.008em;
+}
+
+@utility text-lead {
+  font-size: clamp(1.0625rem, 0.98rem + 0.4vw, 1.3125rem);
+  line-height: 1.65;
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.7;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------
+   Surfaces
+------------------------------------------------------------------- */
+
+/* Faint architectural drawing grid, used on the dark timber sections. */
+@utility grid-lines {
+  background-image:
+    linear-gradient(to right, rgb(248 242 232 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(248 242 232 / 0.05) 1px, transparent 1px);
+  background-size: clamp(5rem, 12.5vw, 12.5rem) clamp(5rem, 12.5vw, 12.5rem);
+  background-position: center top;
+}
+
+/* Lamplight on dark timber: amber from the top left, a deeper timber tone
+   rising from the bottom right. */
+@utility warm-glow {
+  background-image:
+    radial-gradient(60% 90% at 8% 0%, rgb(231 177 109 / 0.2), transparent 70%),
+    radial-gradient(55% 85% at 100% 100%, rgb(108 63 29 / 0.6), transparent 72%);
+}
+
+/* The same lamplight, breathing: a wide soft pool of amber that drifts very
+   slowly across a dark section. Sits behind the content, transform only. */
+.lamplight {
+  position: absolute;
+  inset: -30% -20%;
+  z-index: -10;
+  pointer-events: none;
+  background-image: radial-gradient(38% 46% at 30% 34%, rgb(231 177 109 / 0.2), transparent 72%);
+  animation: lamplight 26s ease-in-out infinite alternate both;
+}
+
+@keyframes lamplight {
+  from {
+    transform: translate3d(-6%, -3%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(18%, 6%, 0) scale(1.18);
+  }
+}
+
+/* Sunlit paper: the faintest warm wash on the light sections, so ivory reads
+   as a surface in the light rather than a flat fill. */
+@utility sunlit {
+  background-image: radial-gradient(70% 55% at 100% 0%, rgb(231 177 109 / 0.14), transparent 70%);
+}
+
+/* Underline that draws in from the left on hover / focus. */
+@utility link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 500ms var(--ease-editorial);
+
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Buttons — the fill rises from the bottom edge on hover, and the arrow
+   leaves to the right while its twin arrives from the left.
+   Structure (components/ui/ButtonLink):
+     a.btn > span.btn-fill + span.btn-label + span.btn-arrow > svg + svg
+------------------------------------------------------------------- */
+.btn {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  transition:
+    color 500ms var(--ease-editorial),
+    border-color 500ms var(--ease-editorial);
+}
+
+.btn-fill {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  transform: translate3d(0, 101%, 0);
+  transition: transform 650ms var(--ease-editorial);
+}
+
+.btn-arrow {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  overflow: clip;
+}
+
+.btn-arrow > svg {
+  transition: transform 550ms var(--ease-editorial);
+}
+
+.btn-arrow > svg + svg {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(-130%, 0, 0);
+}
+
+.btn-arrow[data-direction="out"] > svg + svg {
+  transform: translate3d(-130%, 130%, 0);
+}
+
+@media (hover: hover) {
+  .btn:hover .btn-fill,
+  .btn:focus-visible .btn-fill {
+    transform: none;
+  }
+
+  .btn:hover .btn-arrow > svg:first-child,
+  .btn:focus-visible .btn-arrow > svg:first-child {
+    transform: translate3d(130%, 0, 0);
+  }
+
+  .btn:hover .btn-arrow[data-direction="out"] > svg:first-child,
+  .btn:focus-visible .btn-arrow[data-direction="out"] > svg:first-child {
+    transform: translate3d(130%, -130%, 0);
+  }
+
+  .btn:hover .btn-arrow > svg + svg,
+  .btn:focus-visible .btn-arrow > svg + svg {
+    transform: none;
+  }
+}
+
+.btn:active .btn-fill {
+  transform: none;
+  transition-duration: 200ms;
+}
+
+/* Scroll cue in the hero. */
+/* The line travels down through its track. Transform only — an earlier
+   version animated transform-origin, which the browser cannot composite. */
+@keyframes scroll-cue {
+  from {
+    transform: translate3d(0, -101%, 0);
+  }
+  to {
+    transform: translate3d(0, 101%, 0);
+  }
+}
+
+@utility animate-scroll-cue {
+  animation: scroll-cue 2.6s var(--ease-editorial) infinite;
+}
+
+/* ------------------------------------------------------------------
+   FAQ accordion — native <details>. Where the browser can animate to
+   `auto` height the panel eases open; elsewhere it simply opens.
+------------------------------------------------------------------- */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  .faq-item::details-content {
+    block-size: 0;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      block-size 600ms var(--ease-editorial),
+      opacity 500ms ease,
+      content-visibility 600ms allow-discrete;
+  }
+
+  .faq-item[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Above-the-fold entrance — CSS only, so it starts at first paint
+   rather than after JavaScript loads. Used by components/motion/Enter.
+------------------------------------------------------------------- */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--enter-y, 1.25rem), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes enter-line {
+  from {
+    transform: translate3d(0, 110%, 0) rotate(2.5deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes enter-settle {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes enter-rule {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes enter-veil {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@utility animate-enter {
+  animation: enter-up 900ms var(--ease-editorial) var(--enter-delay, 0ms) both;
+}
+
+@utility animate-enter-line {
+  transform-origin: left bottom;
+  animation: enter-line 1200ms var(--ease-editorial) var(--enter-delay, 0ms) both;
+}
+
+@utility animate-enter-settle {
+  animation: enter-settle 2400ms var(--ease-editorial) both;
+}
+
+@utility animate-enter-rule {
+  transform-origin: left center;
+  animation: enter-rule 1200ms var(--ease-editorial) var(--enter-delay, 0ms) both;
+}
+
+/* A dark veil that lifts as an inner page opens — the same gesture as the home hero. */
+@utility animate-enter-veil {
+  animation: enter-veil 1400ms cubic-bezier(0.4, 0, 0.2, 1) 40ms both;
+}
+
+/* ------------------------------------------------------------------
+   Scroll reveals — used by Reveal, RevealLines and MaskReveal.
+   Elements are only hidden when scripting is available (so the page is
+   complete without JavaScript) and when motion is welcome. The shared
+   observer in PageTransition adds [data-revealed] as each one enters
+   the viewport.
+------------------------------------------------------------------- */
+[data-reveal="up"] {
+  transition:
+    opacity 1000ms ease-out var(--reveal-delay, 0ms),
+    transform 1100ms var(--ease-editorial) var(--reveal-delay, 0ms);
+}
+
+.reveal-line {
+  display: block;
+  transform-origin: left bottom;
+  transition: transform 1200ms var(--ease-editorial) var(--reveal-delay, 0ms);
+}
+
+.reveal-mask {
+  transition: clip-path 1400ms var(--ease-editorial) var(--reveal-delay, 0ms);
+}
+
+.reveal-zoom {
+  transition: transform 1800ms var(--ease-editorial) var(--reveal-delay, 0ms);
+}
+
+/* A hairline that draws itself from the left as its row is revealed. Put
+   `rule-t` on a revealed element (or inside one) in place of a top border. */
+.rule-t {
+  position: relative;
+}
+
+.rule-t::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background-color: currentColor;
+  opacity: var(--rule-opacity, 0.16);
+  transform-origin: left center;
+  transition: transform 1500ms var(--ease-editorial) var(--reveal-delay, 0ms);
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal="up"]:not([data-revealed]) {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-y, 28px), 0);
+  }
+
+  [data-reveal="lines"]:not([data-revealed]) .reveal-line {
+    transform: translate3d(0, 110%, 0) rotate(2.5deg);
+  }
+
+  [data-reveal="mask"]:not([data-revealed]) .reveal-mask {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  [data-reveal="mask"]:not([data-revealed]) .reveal-zoom {
+    transform: scale(1.16);
+  }
+
+  [data-reveal]:not([data-revealed]).rule-t::before,
+  [data-reveal]:not([data-revealed]) .rule-t::before {
+    transform: scaleX(0);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Scroll-driven motion — tied to the scroll position itself rather than
+   to a timer, so it runs on the compositor and costs nothing to script.
+   Only where the browser supports scroll-driven animations and motion is
+   welcome; elsewhere each element simply rests in its final state.
+
+   Frames that hold a scroll-driven child must clip with `overflow: clip`
+   (Tailwind `overflow-clip`), never `overflow: hidden` — a hidden box is
+   a scroll container, and would capture the child's view() timeline.
+------------------------------------------------------------------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* A photograph drifting inside its frame as it crosses the screen. */
+    .parallax {
+      animation: parallax linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+
+    /* A photograph that grows from a slightly smaller frame to its full size. */
+    .scroll-open {
+      animation: scroll-open linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 42%;
+    }
+
+    /* Thin amber line across the top of the page: how far down you are. */
+    .scroll-progress {
+      animation: scroll-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    /* The marquee leans with the scroll as well as moving on its own. */
+    .marquee-scroll {
+      animation: marquee-scroll linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+
+    /* Large display words that slide in from the side as they are read. */
+    .scroll-slide {
+      animation: scroll-slide linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 55%;
+    }
+  }
+}
+
+@keyframes parallax {
+  from {
+    transform: translate3d(0, calc(var(--parallax, 6%) * -1), 0) scale(1.14);
+  }
+  to {
+    transform: translate3d(0, var(--parallax, 6%), 0) scale(1.14);
+  }
+}
+
+/* Transform only: animating clip-path with the scroll would repaint the
+   photograph on every frame. */
+@keyframes scroll-open {
+  from {
+    transform: scale(0.86);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes scroll-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translate3d(3%, 0, 0);
+  }
+  to {
+    transform: translate3d(-8%, 0, 0);
+  }
+}
+
+@keyframes scroll-slide {
+  from {
+    transform: translate3d(var(--slide, 6%), 0, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.scroll-progress {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ------------------------------------------------------------------
+   Marquee — one line of display type crossing the page, slowly.
+   Two identical tracks sit side by side and each slides one full width,
+   so the loop is seamless. One long loop: see the note on loops below.
+------------------------------------------------------------------- */
+.marquee {
+  display: flex;
+  overflow: clip;
+  user-select: none;
+}
+
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-width: 100%;
+  animation: marquee var(--marquee-duration, 70s) linear infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+
+  .lamplight {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   WhatsApp button — a soft ring leaves the button every few seconds.
+   (Its arrival and its move at the foot of the page are handled in
+   components/layout/WhatsAppButton.)
+------------------------------------------------------------------- */
+.pulse-ring {
+  animation: pulse-ring 5.5s var(--ease-editorial) 2s infinite both;
+}
+
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  45%,
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Hero motion — the home page photograph (components/sections/Hero).
+
+   The idea: a still photograph that is quietly alive. Every effect is
+   something already in the picture — running water, steam, sunlight,
+   lamplight — never decoration laid on top.
+
+   Layers, outermost first:
+     .hero-stage    clips everything and is the size container
+     .hero-pointer  eases against the pointer (HeroPointer sets --px/--py)
+     .hero-scroll   falls back as the page scrolls
+     .hero-settle   settles from a slight zoom as the page opens
+     .hero-drift    slow, endless drift
+     .hero-frame    exactly the photograph's proportions, covering the stage
+     .hero-fx       the living details, positioned in % of the photograph
+     .hero-dim      the room darkening as the visitor scrolls on
+     .hero-bloom    warm light from the window as the page opens
+     .hero-veil     dark veil that lifts as the page opens
+
+   The living details, all drawn from what is in the picture:
+     light   sun on the floor, leaf shadows swaying across it, dust in the
+             window light, the LED coves breathing, the candle (phone
+             picture only)
+
+   Deliberately absent: bands of light sweeping across the picture (a ray
+   from the window, a glint on the shower glass). They read as pale
+   rectangles sliding over the photograph and were removed on request.
+     water   the rain shower, rings where it lands, mist, steam, the bath
+             filler, rings in the bath, light on the bath water
+
+   Rules that keep this cheap on phones (each was measured):
+     - animate only transform and opacity;
+     - keep infinite loops long — every time a loop wraps, the browser wakes
+       the main thread, so a loop of a few hundred milliseconds is costly;
+     - no mask-image on animated layers.
+------------------------------------------------------------------- */
+.hero-stage {
+  position: absolute;
+  inset: 0;
+  z-index: -20;
+  overflow: clip;
+  container-type: size;
+}
+
+.hero-pointer,
+.hero-scroll,
+.hero-settle,
+.hero-drift,
+.hero-frame {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-pointer {
+  transform: translate3d(calc(var(--px, 0) * -1.6%), calc(var(--py, 0) * -1.2%), 0);
+}
+
+.hero-settle {
+  animation: hero-settle 3600ms var(--ease-editorial) both;
+}
+
+/* A longer, deeper settle than the inner pages: the room comes to rest. */
+@keyframes hero-settle {
+  from {
+    transform: scale(1.16) translate3d(0, 1.2%, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Never rests below 1.04×, so drifting and pointer movement cannot expose an edge. */
+.hero-drift {
+  animation: hero-drift 28s ease-in-out infinite alternate both;
+}
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1.09) translate3d(0.6%, 0.4%, 0);
+  }
+  to {
+    transform: scale(1.04) translate3d(-0.6%, -0.4%, 0);
+  }
+}
+
+/* ---------- Opening: the room is lit ---------- */
+.hero-veil,
+.hero-bloom,
+.hero-dim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-dim {
+  background-color: var(--color-espresso);
+  opacity: 0;
+}
+
+.hero-veil {
+  background-color: var(--color-espresso);
+  animation: hero-veil 2200ms cubic-bezier(0.4, 0, 0.2, 1) 60ms both;
+}
+
+.hero-bloom {
+  --bloom-x: 88%;
+  background-image: radial-gradient(75% 95% at var(--bloom-x) 28%, rgb(255 228 184 / 0.62), transparent 70%);
+  animation: hero-bloom 3800ms ease-out 150ms both;
+}
+
+@keyframes hero-veil {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-bloom {
+  0% {
+    opacity: 0;
+  }
+  28% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- Living details ---------- */
+.hero-fx {
+  display: none;
+}
+
+/* With container units the frame can match the photograph exactly, which is
+   what lets each effect sit on the right part of the picture at every size. */
+@supports (width: 1cqw) {
+  .hero-frame {
+    --ratio: 1.77683; /* hero-bathroom.jpg, 1672 × 941 */
+    --focus-x: 0.52;
+    --focus-y: 0.5;
+    --w: max(100cqw, 100cqh * var(--ratio));
+    --h: max(100cqh, 100cqw / var(--ratio));
+    inset: auto;
+    width: var(--w);
+    height: var(--h);
+    left: calc((100cqw - var(--w)) * var(--focus-x));
+    top: calc((100cqh - var(--h)) * var(--focus-y));
+  }
+
+  /* The details come alive just after the room is lit. */
+  .hero-fx {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    animation: hero-fx-in 2400ms ease-out 900ms both;
+  }
+
+  @keyframes hero-fx-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .hero-fx > * {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* --- Sunlight on the floor, breathing as if leaves were moving outside --- */
+  .hero-sun {
+    left: 26%;
+    top: 70%;
+    width: 44%;
+    height: 30%;
+    background-image: radial-gradient(ellipse at 55% 45%, rgb(255 216 158 / 0.42), transparent 68%);
+    animation: hero-sun 7.5s ease-in-out infinite alternate both;
+  }
+
+  @keyframes hero-sun {
+    from {
+      opacity: 0.1;
+      transform: translate3d(-2.5%, 0, 0) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(2.5%, -1%, 0) scale(1.04);
+    }
+  }
+
+  /* --- Leaf shadows: the foliage outside the window, swaying across the floor.
+     Two sheets of soft blots — one of shade, one of light — moving at
+     different speeds, skewed to lie along the floor. --- */
+  .hero-leaves {
+    --leaf-skew: -24deg; /* the window is on the right: shadows fall away to the left */
+    left: 42%;
+    top: 67%;
+    width: 23%;
+    height: 27%;
+  }
+
+  .hero-leaves span {
+    position: absolute;
+    inset: 0;
+    transform-origin: 85% 0%;
+    background-image:
+      radial-gradient(ellipse 9% 12% at 24% 34%, rgb(52 28 12 / 0.34), transparent),
+      radial-gradient(ellipse 7% 10% at 43% 22%, rgb(52 28 12 / 0.28), transparent),
+      radial-gradient(ellipse 11% 13% at 58% 46%, rgb(52 28 12 / 0.32), transparent),
+      radial-gradient(ellipse 8% 9% at 36% 62%, rgb(52 28 12 / 0.26), transparent),
+      radial-gradient(ellipse 10% 11% at 72% 30%, rgb(52 28 12 / 0.24), transparent),
+      radial-gradient(ellipse 7% 9% at 64% 70%, rgb(52 28 12 / 0.22), transparent);
+    animation: hero-sway 11s ease-in-out infinite alternate both;
+  }
+
+  .hero-leaves span:nth-child(2) {
+    background-image:
+      radial-gradient(ellipse 8% 10% at 33% 28%, rgb(255 220 160 / 0.3), transparent),
+      radial-gradient(ellipse 10% 12% at 50% 34%, rgb(255 220 160 / 0.26), transparent),
+      radial-gradient(ellipse 7% 9% at 66% 52%, rgb(255 220 160 / 0.28), transparent),
+      radial-gradient(ellipse 9% 10% at 46% 66%, rgb(255 220 160 / 0.22), transparent),
+      radial-gradient(ellipse 8% 9% at 78% 40%, rgb(255 220 160 / 0.2), transparent);
+    animation-duration: 17s;
+    animation-delay: -6s;
+  }
+
+  @keyframes hero-sway {
+    from {
+      transform: skewX(var(--leaf-skew)) translate3d(-3%, 1%, 0) rotate(-1.6deg);
+    }
+    to {
+      transform: skewX(var(--leaf-skew)) translate3d(3%, -1%, 0) rotate(1.6deg);
+    }
+  }
+
+  /* --- Dust in the window light: a few motes, each on its own long drift --- */
+  .hero-motes {
+    left: 60%;
+    top: 6%;
+    width: 36%;
+    height: 62%;
+  }
+
+  .hero-motes span {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--s, 5px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-image: radial-gradient(circle, rgb(255 240 210 / 0.95), rgb(255 222 168 / 0.35) 45%, transparent 70%);
+    animation: hero-mote var(--t, 19s) linear var(--d, 0s) infinite both;
+  }
+
+  .hero-motes span:nth-child(1) {
+    --x: 12%;
+    --y: 70%;
+    --s: 5px;
+    --t: 21s;
+    --d: -3s;
+    --dx: 38px;
+    --dy: -150px;
+  }
+
+  .hero-motes span:nth-child(2) {
+    --x: 34%;
+    --y: 52%;
+    --s: 3px;
+    --t: 17s;
+    --d: -9s;
+    --dx: -22px;
+    --dy: -110px;
+  }
+
+  .hero-motes span:nth-child(3) {
+    --x: 56%;
+    --y: 78%;
+    --s: 6px;
+    --t: 25s;
+    --d: -14s;
+    --dx: 30px;
+    --dy: -190px;
+  }
+
+  .hero-motes span:nth-child(4) {
+    --x: 72%;
+    --y: 40%;
+    --s: 4px;
+    --t: 19s;
+    --d: -6s;
+    --dx: -34px;
+    --dy: -120px;
+  }
+
+  .hero-motes span:nth-child(5) {
+    --x: 24%;
+    --y: 34%;
+    --s: 4px;
+    --t: 23s;
+    --d: -17s;
+    --dx: 26px;
+    --dy: -100px;
+  }
+
+  .hero-motes span:nth-child(6) {
+    --x: 84%;
+    --y: 64%;
+    --s: 5px;
+    --t: 27s;
+    --d: -11s;
+    --dx: -18px;
+    --dy: -170px;
+  }
+
+  .hero-motes span:nth-child(7) {
+    --x: 46%;
+    --y: 24%;
+    --s: 3px;
+    --t: 18s;
+    --d: -1s;
+    --dx: 20px;
+    --dy: -80px;
+  }
+
+  .hero-motes span:nth-child(8) {
+    --x: 64%;
+    --y: 88%;
+    --s: 4px;
+    --t: 22s;
+    --d: -19s;
+    --dx: -28px;
+    --dy: -160px;
+  }
+
+  @keyframes hero-mote {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 0, 0) scale(0.6);
+    }
+    18% {
+      opacity: 0.85;
+    }
+    62% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0;
+      transform: translate3d(var(--dx, 24px), var(--dy, -120px), 0) scale(1.2);
+    }
+  }
+
+  /* --- LED lighting: the coves, the niche, under the mirror and under the vanity --- */
+  .hero-glow {
+    background-image: radial-gradient(ellipse at center, rgb(255 196 120 / 0.5), transparent 70%);
+    animation: hero-glow 4.8s ease-in-out infinite alternate both;
+  }
+
+  .hero-glow-cove {
+    left: 47%;
+    top: 2.5%;
+    width: 24%;
+    height: 8%;
+    animation-duration: 6.4s;
+    animation-delay: -1.1s;
+  }
+
+  .hero-glow-niche {
+    left: 72%;
+    top: 24%;
+    width: 14.5%;
+    height: 7%;
+    animation-duration: 5.6s;
+    animation-delay: -3.3s;
+  }
+
+  .hero-glow-mirror {
+    left: 13%;
+    top: 38.5%;
+    width: 27%;
+    height: 7%;
+  }
+
+  .hero-glow-floor {
+    left: 2%;
+    top: 77%;
+    width: 42%;
+    height: 12%;
+    rotate: -9.8deg;
+    animation-delay: -2.4s;
+  }
+
+  @keyframes hero-glow {
+    from {
+      opacity: 0.15;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* --- Candle on the bath tray (it is only lit in the phone photograph) --- */
+  .hero-candle {
+    display: none;
+    aspect-ratio: 1;
+    background-image: radial-gradient(
+      circle,
+      rgb(255 214 140 / 0.8) 0%,
+      rgb(255 176 84 / 0.38) 28%,
+      transparent 66%
+    );
+    animation: hero-flicker 5.6s linear infinite both;
+  }
+
+  /* One long, irregular loop — it never reads as a rhythm. */
+  @keyframes hero-flicker {
+    0% {
+      opacity: 0.75;
+      transform: scale(1);
+    }
+    7% {
+      opacity: 0.95;
+      transform: scale(1.06);
+    }
+    13% {
+      opacity: 0.62;
+      transform: scale(0.95);
+    }
+    21% {
+      opacity: 0.9;
+      transform: scale(1.04);
+    }
+    34% {
+      opacity: 0.7;
+      transform: scale(0.98);
+    }
+    41% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+    52% {
+      opacity: 0.66;
+      transform: scale(0.96);
+    }
+    63% {
+      opacity: 0.88;
+      transform: scale(1.03);
+    }
+    74% {
+      opacity: 0.6;
+      transform: scale(0.94);
+    }
+    86% {
+      opacity: 0.96;
+      transform: scale(1.06);
+    }
+    100% {
+      opacity: 0.75;
+      transform: scale(1);
+    }
+  }
+
+  /* --- Steam: soft plumes that rise, widen and fade --- */
+  .hero-steam-shower {
+    left: 54.5%;
+    top: 26%;
+    width: 9.5%;
+    height: 40%;
+  }
+
+  .hero-steam-bath {
+    left: 66%;
+    top: 50%;
+    width: 18%;
+    height: 30%;
+  }
+
+  .hero-steam span {
+    position: absolute;
+    left: -10%;
+    bottom: 0;
+    width: 120%;
+    aspect-ratio: 1;
+    background-image: radial-gradient(circle, rgb(255 248 236 / 0.34) 0%, rgb(255 248 236 / 0.12) 38%, transparent 68%);
+    animation: hero-steam 12s linear infinite both;
+  }
+
+  .hero-steam span:nth-child(2) {
+    left: 10%;
+    animation-duration: 15s;
+    animation-delay: -7s;
+  }
+
+  .hero-steam-bath span {
+    animation-duration: 14s;
+    animation-delay: -3s;
+  }
+
+  .hero-steam-bath span:nth-child(2) {
+    animation-duration: 17s;
+    animation-delay: -11s;
+  }
+
+  @keyframes hero-steam {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 35%, 0) scale(0.6);
+    }
+    22% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 0.55;
+    }
+    100% {
+      opacity: 0;
+      transform: translate3d(9%, -120%, 0) scale(1.55);
+    }
+  }
+
+  /* --- Falling water: the rain shower and the bath filler --- */
+  .hero-water {
+    overflow: hidden;
+    mix-blend-mode: screen;
+    mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 82%, transparent);
+  }
+
+  .hero-water-shower {
+    left: 57.05%;
+    top: 16.4%;
+    width: 4.3%;
+    height: 50.8%;
+  }
+
+  .hero-water-filler {
+    left: 91.3%;
+    top: 59.4%;
+    width: 0.8%;
+    height: 12%;
+  }
+
+  /* Each layer is a strip of streaks, taller than its box, sliding down by a
+     whole number of tiles — a seamless loop on the compositor. Three layers
+     at different spacings and speeds read as falling water.
+
+     - The streaks are a tiny repeating SVG tile (a hairline that fades in and
+       out), not a gradient cut out with mask-image.
+     - --loops: looping once per tile (several times a second) cost about 70
+       style recalculations a second; travelling 24 tiles per loop looks
+       identical and costs almost nothing. */
+  .hero-water span {
+    --loops: 24;
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    top: calc(var(--tile) * var(--loops) * -1);
+    background-repeat: repeat;
+    animation: hero-rain calc(var(--speed) * var(--loops)) linear infinite;
+  }
+
+  /* --tile must equal the height of the SVG tile in the same rule. */
+  .hero-water span:nth-child(1) {
+    --tile: 72px;
+    --speed: 210ms;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='72'%3E%3ClinearGradient id='g' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='.45' stop-color='%23fff' stop-opacity='0.6'/%3E%3Cstop offset='.8' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3Crect x='2' width='1.5' height='72' fill='url(%23g)'/%3E%3C/svg%3E");
+  }
+
+  .hero-water span:nth-child(2) {
+    --tile: 104px;
+    --speed: 340ms;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='104'%3E%3ClinearGradient id='g' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='.45' stop-color='%23fff' stop-opacity='0.5'/%3E%3Cstop offset='.8' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3Crect x='6' width='1' height='104' fill='url(%23g)'/%3E%3C/svg%3E");
+  }
+
+  .hero-water span:nth-child(3) {
+    --tile: 56px;
+    --speed: 150ms;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='56'%3E%3ClinearGradient id='g' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='.45' stop-color='%23fff' stop-opacity='0.55'/%3E%3Cstop offset='.8' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3Crect x='11' width='1' height='56' fill='url(%23g)'/%3E%3C/svg%3E");
+  }
+
+  .hero-water-filler span:nth-child(1) {
+    --tile: 30px;
+    --speed: 130ms;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='30'%3E%3ClinearGradient id='g' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='.45' stop-color='%23fff' stop-opacity='0.6'/%3E%3Cstop offset='.8' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3Crect x='1' width='1' height='30' fill='url(%23g)'/%3E%3C/svg%3E");
+  }
+
+  @keyframes hero-rain {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, calc(var(--tile) * var(--loops)), 0);
+    }
+  }
+
+  /* --- Rings spreading where water lands: under the shower and in the bath.
+     Flat ellipses, because the surfaces are seen at a low angle. --- */
+  .hero-ripple span {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgb(255 252 244 / 0.6);
+    border-radius: 50%;
+    animation: hero-ripple 4.2s ease-out infinite both;
+  }
+
+  .hero-ripple span:nth-child(2) {
+    animation-delay: -1.4s;
+  }
+
+  .hero-ripple span:nth-child(3) {
+    animation-delay: -2.8s;
+  }
+
+  .hero-ripple-shower {
+    left: 55.5%;
+    top: 64.8%;
+    width: 7.6%;
+    height: 3.6%;
+  }
+
+  /* On the open water beside the bath tray, where the rings can be seen. */
+  .hero-ripple-bath {
+    left: 74%;
+    top: 75.6%;
+    width: 9.6%;
+    height: 4.8%;
+  }
+
+  .hero-ripple-bath span {
+    border-color: rgb(255 252 244 / 0.42);
+    animation-duration: 5.4s;
+  }
+
+  .hero-ripple-bath span:nth-child(2) {
+    animation-delay: -1.8s;
+  }
+
+  .hero-ripple-bath span:nth-child(3) {
+    animation-delay: -3.6s;
+  }
+
+  @keyframes hero-ripple {
+    from {
+      opacity: 0.9;
+      transform: scale(0.1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1);
+    }
+  }
+
+  /* --- Mist where the shower meets the floor --- */
+  .hero-mist {
+    left: 54%;
+    top: 61.5%;
+    width: 10.5%;
+    height: 9%;
+    background-image: radial-gradient(ellipse at 50% 65%, rgb(255 250 240 / 0.42), transparent 68%);
+    animation: hero-mist 3.6s ease-in-out infinite alternate both;
+  }
+
+  @keyframes hero-mist {
+    from {
+      opacity: 0.35;
+      transform: scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+
+  /* --- Light sliding across the bath water --- */
+  .hero-shimmer {
+    left: 68.2%;
+    top: 75.2%;
+    width: 14.5%;
+    height: 7.5%;
+    overflow: hidden;
+    clip-path: ellipse(50% 50%);
+  }
+
+  .hero-shimmer span {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 55%;
+    background-image: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.4) 50%, transparent);
+    animation: hero-shimmer 6.5s ease-in-out infinite both;
+  }
+
+  @keyframes hero-shimmer {
+    0% {
+      opacity: 0;
+      transform: translate3d(-110%, 0, 0);
+    }
+    20% {
+      opacity: 1;
+    }
+    60%,
+    100% {
+      opacity: 0;
+      transform: translate3d(200%, 0, 0);
+    }
+  }
+
+  /* Phones and portrait tablets use the portrait photograph (see PORTRAIT_MEDIA
+     in Hero.tsx), so every position is restated for that picture. */
+  @media (max-width: 767px), (max-width: 1023px) and (orientation: portrait) {
+    .hero-frame {
+      --ratio: 0.5628; /* hero-bathroom-portrait.jpg, 941 × 1672 */
+      --focus-x: 0.56;
+      --focus-y: 0.55;
+    }
+
+    .hero-sun {
+      left: 46%;
+      top: 68%;
+      width: 60%;
+      height: 24%;
+    }
+
+    .hero-glow-mirror {
+      left: 22%;
+      top: 46.3%;
+      width: 30%;
+      height: 4%;
+    }
+
+    .hero-glow-floor {
+      display: none;
+    }
+
+    .hero-glow-cove {
+      left: 55%;
+      top: 21.5%;
+      width: 27%;
+      height: 4.5%;
+    }
+
+    .hero-glow-niche {
+      left: 84%;
+      top: 39%;
+      width: 16%;
+      height: 3.5%;
+    }
+
+    .hero-leaves {
+      --leaf-skew: 24deg; /* here the window is on the left */
+      left: 44%;
+      top: 66%;
+      width: 56%;
+      height: 22%;
+    }
+
+    .hero-leaves span {
+      transform-origin: 15% 0%;
+    }
+
+    .hero-motes {
+      left: 4%;
+      top: 8%;
+      width: 58%;
+      height: 50%;
+    }
+
+    .hero-ripple-shower {
+      left: 62.6%;
+      top: 62.2%;
+      width: 11.5%;
+      height: 2.4%;
+    }
+
+    .hero-ripple-bath {
+      display: none;
+    }
+
+    .hero-candle {
+      display: block;
+      left: 13.6%;
+      top: 69%;
+      width: 13%;
+    }
+
+    .hero-steam-shower {
+      left: 61.5%;
+      top: 38%;
+      width: 14%;
+      height: 26%;
+    }
+
+    .hero-steam-bath {
+      left: 12%;
+      top: 54%;
+      width: 34%;
+      height: 18%;
+    }
+
+    .hero-water-shower {
+      left: 64.7%;
+      top: 31.4%;
+      width: 7%;
+      height: 32.4%;
+    }
+
+    .hero-water-filler {
+      display: none;
+    }
+
+    .hero-mist {
+      left: 60%;
+      top: 60.5%;
+      width: 16.5%;
+      height: 5.5%;
+    }
+
+    .hero-shimmer {
+      left: 17%;
+      top: 68.2%;
+      width: 27%;
+      height: 4%;
+    }
+  }
+}
+
+/* On phones the window is on the left of the photograph. */
+@media (max-width: 767px), (max-width: 1023px) and (orientation: portrait) {
+  .hero-bloom {
+    --bloom-x: 10%;
+  }
+}
+
+/* Type that sits directly on the photograph gets a soft neutral shadow, so it
+   stays readable over bright areas without tinting the picture. */
+.hero-legible {
+  text-shadow:
+    0 2px 32px rgb(27 18 12 / 0.7),
+    0 1px 10px rgb(27 18 12 / 0.45),
+    0 0 2px rgb(27 18 12 / 0.5);
+}
+
+/* Scroll: the photograph travels at half the speed of the page while it
+   deepens and darkens, so the next section rises over a room that stays
+   almost still; the text lifts away ahead of it. Tablets and desktops only,
+   and only where scroll-driven animations exist; elsewhere the hero simply
+   scrolls off. Inner page heroes (PageHero) share the same classes. */
+@supports (animation-timeline: scroll()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .hero-scroll {
+      animation: hero-scroll linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0px 100svh;
+    }
+
+    .hero-dim {
+      animation: hero-dim linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0px 100svh;
+    }
+
+    .hero-content {
+      animation: hero-content linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0px 70svh;
+    }
+  }
+}
+
+@keyframes hero-scroll {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(0, 46svh, 0) scale(1.08);
+  }
+}
+
+@keyframes hero-dim {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+@keyframes hero-content {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, -5rem, 0);
+  }
+}
+
+/* Nothing animates unseen: HeroPointer sets data-offscreen once the hero has scrolled away. */
+[data-offscreen] .hero-drift,
+[data-offscreen] .hero-fx,
+[data-offscreen] .hero-fx * {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-fx {
+    display: none;
+  }
+
+  .hero-drift {
+    animation: none;
+  }
+}
